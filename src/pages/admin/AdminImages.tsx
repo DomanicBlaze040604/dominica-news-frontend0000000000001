@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { LazyImage } from '@/components/LazyImage';
 import { imagesService } from '../../services/images';
 import { Upload, Trash2, Eye, Copy, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -217,10 +218,13 @@ export const AdminImages: React.FC = () => {
                     <Dialog>
                       <DialogTrigger asChild>
                         <div className="cursor-pointer">
-                          <img
+                          <LazyImage
                             src={image.thumbnailUrl}
                             alt={image.originalName}
                             className="w-full aspect-square object-cover rounded-lg border hover:shadow-md transition-shadow"
+                            useIntersectionObserver={true}
+                            threshold={0.1}
+                            rootMargin="100px"
                           />
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
                             <Eye className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -235,10 +239,11 @@ export const AdminImages: React.FC = () => {
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
-                          <img
+                          <LazyImage
                             src={image.url}
                             alt={image.originalName}
                             className="w-full max-h-96 object-contain rounded-lg border"
+                            useIntersectionObserver={false} // Don't lazy load modal images
                           />
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>

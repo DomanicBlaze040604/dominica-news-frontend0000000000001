@@ -7,6 +7,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../hooks/useAuth";
 import { categoriesService } from "../services/categories";
+import { CategoryDropdown } from "./CategoryDropdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,7 +36,7 @@ const Navbar = () => {
   // Create navigation items with Home + categories
   const navItems = [
     { label: "Home", path: "/" },
-    ...categories.slice(0, 6).map(category => ({
+    ...categories.map(category => ({
       label: category.name,
       path: `/category/${category.slug}`,
     })),
@@ -178,21 +179,35 @@ const Navbar = () => {
         {/* Navigation links - Desktop */}
         <nav className="hidden lg:flex items-center justify-center gap-8 py-3 border-t">
           {navItems.map((item, index) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "text-sm font-medium transition-all duration-300 relative",
-                "hover:text-primary hover:scale-110",
-                "animate-fade-in",
-                location.pathname === item.path
-                  ? "text-primary border-b-2 border-primary pb-1"
-                  : "text-foreground/80"
-              )}
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              {item.label}
-            </Link>
+            item.label === "Home" ? (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "text-sm font-medium transition-all duration-300 relative",
+                  "hover:text-primary hover:scale-110",
+                  "animate-fade-in",
+                  location.pathname === item.path
+                    ? "text-primary border-b-2 border-primary pb-1"
+                    : "text-foreground/80"
+                )}
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <div
+                key={item.path}
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <CategoryDropdown
+                  categorySlug={item.path.replace('/category/', '')}
+                  categoryName={item.label}
+                  isActive={location.pathname === item.path}
+                />
+              </div>
+            )
           ))}
         </nav>
 

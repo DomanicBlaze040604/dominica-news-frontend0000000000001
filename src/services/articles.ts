@@ -48,6 +48,30 @@ export const articlesService = {
     return response.data;
   },
 
+  getPinnedArticles: async (limit?: number): Promise<ApiResponse<{ articles: Article[]; count: number }>> => {
+    const searchParams = new URLSearchParams();
+    if (limit) searchParams.append('limit', limit.toString());
+
+    const response = await api.get<ApiResponse<{ articles: Article[]; count: number }>>(
+      `/articles/pinned?${searchParams.toString()}`
+    );
+    return response.data;
+  },
+
+  getLatestArticles: async (params?: {
+    limit?: number;
+    excludePinned?: boolean;
+  }): Promise<ApiResponse<{ articles: Article[]; count: number }>> => {
+    const searchParams = new URLSearchParams();
+    if (params?.limit) searchParams.append('limit', params.limit.toString());
+    if (params?.excludePinned) searchParams.append('excludePinned', 'true');
+
+    const response = await api.get<ApiResponse<{ articles: Article[]; count: number }>>(
+      `/articles/latest?${searchParams.toString()}`
+    );
+    return response.data;
+  },
+
   // Admin endpoints
   getAdminArticles: async (params?: {
     page?: number;

@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
@@ -92,5 +115,165 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+/* Breaking News Ticker Styles */
+.breaking-news-ticker + * {
+  margin-top: 48px; /* Default height for breaking news ticker */
+}
+
+@media (max-width: 768px) {
+  .breaking-news-ticker + * {
+    margin-top: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .breaking-news-ticker + * {
+    margin-top: 40px;
+  }
+}/* Brea
+king News Ticker Component Styles */
+.breaking-news-ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+.breaking-news-container {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  min-height: 48px;
+}
+
+.breaking-news-label {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-right: 16px;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.breaking-text {
+  animation: pulse 2s infinite;
+}
+
+.breaking-news-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.breaking-news-text {
+  white-space: nowrap;
+  animation: scroll 20s linear infinite;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.breaking-news-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  margin-left: 16px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breaking-news-dismiss:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsive design for breaking news */
+@media (max-width: 768px) {
+  .breaking-news-container {
+    padding: 6px 12px;
+    min-height: 44px;
+  }
+
+  .breaking-news-label {
+    margin-right: 12px;
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .breaking-news-text {
+    font-size: 13px;
+    animation: scroll 15s linear infinite;
+  }
+
+  .breaking-news-dismiss {
+    margin-left: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .breaking-news-container {
+    padding: 4px 8px;
+    min-height: 40px;
+  }
+
+  .breaking-news-label {
+    margin-right: 8px;
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+
+  .breaking-news-text {
+    font-size: 12px;
+    animation: scroll 12s linear infinite;
+  }
+
+  .breaking-news-dismiss {
+    margin-left: 8px;
   }
 }

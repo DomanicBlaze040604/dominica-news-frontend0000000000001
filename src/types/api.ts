@@ -39,6 +39,19 @@ export interface Category {
   createdAt: string;
 }
 
+// Author types
+export interface Author {
+  id: string;
+  name: string;
+  role: string;
+  biography?: string;
+  profileImage?: string;
+  email: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Article types
 export interface Article {
   id: string;
@@ -47,10 +60,15 @@ export interface Article {
   excerpt?: string;
   content: string;
   featuredImage?: string;
+  featuredImageAlt?: string; // Alt text for featured image
   category: Category;
-  author: User;
-  status: 'draft' | 'published';
+  author: Author;
+  status: 'draft' | 'published' | 'scheduled';
   publishedAt?: string;
+  scheduledAt?: string;
+  isPinned: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -61,14 +79,52 @@ export interface Image {
   filename: string;
   originalName: string;
   filePath: string;
+  thumbnailPath: string;
   fileSize: number;
   mimeType: string;
   width?: number;
   height?: number;
+  altText: string;
   uploader: User;
+  // Enhanced URLs for different sizes
+  urls: {
+    original: string;
+    large: string;
+    medium: string;
+    small: string;
+    thumbnail: string;
+    navigationThumbnail: string;
+  };
+  webpUrls: {
+    original: string;
+    large: string;
+    medium: string;
+    small: string;
+  };
+  // Legacy URLs for backward compatibility
   url: string;
   thumbnailUrl: string;
   createdAt: string;
+}
+
+// Breaking News types
+export interface BreakingNews {
+  id: string;
+  text: string;
+  isActive: boolean;
+  createdBy: User;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BreakingNewsFormData {
+  text: string;
+  isActive?: boolean;
+}
+
+export interface BreakingNewsResponse {
+  breakingNews: BreakingNews[];
+  pagination?: Pagination;
 }
 
 // Form data types
@@ -88,8 +144,14 @@ export interface ArticleFormData {
   excerpt?: string;
   content: string;
   featuredImage?: string;
+  featuredImageAlt?: string;
   categoryId: string;
-  status: 'draft' | 'published';
+  authorId?: string;
+  status: 'draft' | 'published' | 'scheduled';
+  scheduledAt?: string;
+  isPinned?: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 export interface CategoryFormData {

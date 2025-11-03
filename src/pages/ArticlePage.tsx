@@ -2,6 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import NewsCard from "@/components/NewsCard";
+import { LazyImage } from "@/components/LazyImage";
+import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { articlesService } from "../services/articles";
@@ -91,6 +93,8 @@ const ArticlePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* SEO Head with structured data */}
+      {article && <SEOHead article={article} />}
       <Navbar />
       
       <main className="container mx-auto px-4 py-8">
@@ -123,7 +127,7 @@ const ArticlePage = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-              {article.title}
+              {article.seoTitle || article.title}
             </h1>
 
             {article.excerpt && (
@@ -190,10 +194,13 @@ const ArticlePage = () => {
           {/* Featured Image */}
           {article.featuredImage && (
             <div className="mb-8 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-              <img
+              <LazyImage
                 src={article.featuredImage}
-                alt={article.title}
+                alt={article.featuredImageAlt || article.title}
                 className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+                useIntersectionObserver={true}
+                threshold={0.1}
+                rootMargin="50px"
               />
             </div>
           )}
@@ -243,7 +250,7 @@ const ArticlePage = () => {
         {relatedArticles.length > 0 && (
           <section className="max-w-6xl mx-auto animate-fade-in-up" style={{ animationDelay: "400ms" }}>
             <h2 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-primary inline-block">
-              Related Articles
+              More {article.category.name} News
             </h2>
             
             {isLoadingRelated ? (
@@ -265,6 +272,7 @@ const ArticlePage = () => {
                     title={relatedArticle.title}
                     excerpt={relatedArticle.excerpt || ''}
                     image={relatedArticle.featuredImage || ''}
+                    imageAlt={relatedArticle.featuredImageAlt}
                     category={relatedArticle.category.name}
                     date={relatedArticle.publishedAt || relatedArticle.createdAt}
                     slug={relatedArticle.slug}

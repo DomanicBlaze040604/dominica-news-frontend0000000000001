@@ -13,6 +13,8 @@ import {
   Home,
   LogOut,
   User,
+  AlertTriangle,
+  Globe,
 } from 'lucide-react';
 
 const adminNavItems = [
@@ -30,6 +32,21 @@ const adminNavItems = [
     label: 'Categories',
     path: '/admin/categories',
     icon: FolderOpen,
+  },
+  {
+    label: 'Authors',
+    path: '/admin/authors',
+    icon: User,
+  },
+  {
+    label: 'Pages',
+    path: '/admin/pages',
+    icon: Globe,
+  },
+  {
+    label: 'Breaking News',
+    path: '/admin/breaking-news',
+    icon: AlertTriangle,
   },
   {
     label: 'Images',

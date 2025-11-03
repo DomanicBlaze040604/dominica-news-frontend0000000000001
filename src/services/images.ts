@@ -3,10 +3,7 @@ import { ApiResponse, Image, ImagesResponse } from '../types/api';
 
 export const imagesService = {
   // Admin endpoints
-  uploadImage: async (file: File): Promise<ApiResponse<{ image: Image }>> => {
-    const formData = new FormData();
-    formData.append('image', file);
-
+  uploadImage: async (formData: FormData): Promise<ApiResponse<{ image: Image }>> => {
     const response = await api.post<ApiResponse<{ image: Image }>>(
       '/admin/images/upload',
       formData,

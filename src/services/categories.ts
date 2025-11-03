@@ -13,6 +13,11 @@ export const categoriesService = {
     return response.data;
   },
 
+  getCategoryPreview: async (slug: string, limit: number = 5): Promise<ApiResponse<{ category: Category; articles: any[]; count: number }>> => {
+    const response = await api.get<ApiResponse<{ category: Category; articles: any[]; count: number }>>(`/categories/${slug}/preview?limit=${limit}`);
+    return response.data;
+  },
+
   // Admin endpoints
   createCategory: async (categoryData: CategoryFormData): Promise<ApiResponse<{ category: Category }>> => {
     const response = await api.post<ApiResponse<{ category: Category }>>('/admin/categories', categoryData);

@@ -7,6 +7,7 @@ import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { lazy, Suspense } from "react";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { BreakingNewsTicker } from "./components/BreakingNewsTicker";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -17,6 +18,9 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard").then(m 
 const AdminArticles = lazy(() => import("./pages/admin/AdminArticles").then(m => ({ default: m.AdminArticles })));
 const AdminArticleEditor = lazy(() => import("./pages/admin/AdminArticleEditor").then(m => ({ default: m.AdminArticleEditor })));
 const AdminCategories = lazy(() => import("./pages/admin/AdminCategories").then(m => ({ default: m.AdminCategories })));
+const AdminAuthors = lazy(() => import("./pages/admin/AdminAuthors").then(m => ({ default: m.AdminAuthors })));
+const AdminStaticPages = lazy(() => import("./pages/admin/AdminStaticPages").then(m => ({ default: m.AdminStaticPages })));
+const AdminBreakingNews = lazy(() => import("./pages/admin/AdminBreakingNews").then(m => ({ default: m.AdminBreakingNews })));
 const AdminImages = lazy(() => import("./pages/admin/AdminImages").then(m => ({ default: m.AdminImages })));
 
 // Lazy load public pages
@@ -53,6 +57,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <BreakingNewsTicker />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -128,6 +133,21 @@ const App = () => (
                 <Route path="categories" element={
                   <Suspense fallback={<LoadingSpinner />}>
                     <AdminCategories />
+                  </Suspense>
+                } />
+                <Route path="authors" element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AdminAuthors />
+                  </Suspense>
+                } />
+                <Route path="pages" element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AdminStaticPages />
+                  </Suspense>
+                } />
+                <Route path="breaking-news" element={
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <AdminBreakingNews />
                   </Suspense>
                 } />
                 <Route path="images" element={
