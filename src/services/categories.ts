@@ -1,5 +1,6 @@
 import { api } from './api';
 import { ApiResponse, Category, CategoriesResponse, CategoryFormData } from '../types/api';
+import { withFallback, fallbackService } from './fallbackData';
 
 export const categoriesService = {
   // Public endpoints
@@ -20,8 +21,13 @@ export const categoriesService = {
 
   // Admin endpoints
   getAdminCategories: async (): Promise<ApiResponse<Category[]>> => {
-    const response = await api.get<ApiResponse<Category[]>>('/admin/categories');
-    return response.data;
+    return withFallback(
+      async () => {
+        const response = await api.get<ApiResponse<Category[]>>('/admin/categories');
+        return response.data;
+      },
+      () => fallbackService.getAdminCategories()
+    );
   },
 
   createCategory: async (categoryData: CategoryFormData): Promise<ApiResponse<{ category: Category }>> => {

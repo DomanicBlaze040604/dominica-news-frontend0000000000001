@@ -1,9 +1,13 @@
 import { api } from './api';
 import { ApiResponse, Image, ImagesResponse } from '../types/api';
+import { withFallback, fallbackService } from './fallbackData';
 
 export const imagesService = {
   // Admin endpoints
-  uploadImage: async (formData: FormData): Promise<ApiResponse<{ image: Image }>> => {
+  uploadImage: async (file: File): Promise<ApiResponse<{ image: Image }>> => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
     const response = await api.post<ApiResponse<{ image: Image }>>(
       '/admin/images/upload',
       formData,
@@ -20,14 +24,19 @@ export const imagesService = {
     page?: number;
     limit?: number;
   }): Promise<ApiResponse<ImagesResponse>> => {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.append('page', params.page.toString());
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
+    return withFallback(
+      async () => {
+        const searchParams = new URLSearchParams();
+        if (params?.page) searchParams.append('page', params.page.toString());
+        if (params?.limit) searchParams.append('limit', params.limit.toString());
 
-    const response = await api.get<ApiResponse<ImagesResponse>>(
-      `/admin/images?${searchParams.toString()}`
+        const response = await api.get<ApiResponse<ImagesResponse>>(
+          `/admin/images?${searchParams.toString()}`
+        );
+        return response.data;
+      },
+      () => fallbackService.getImages(params)
     );
-    return response.data;
   },
 
   getImageById: async (id: string): Promise<ApiResponse<{ image: Image }>> => {

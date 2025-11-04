@@ -1,5 +1,6 @@
 import { api } from './api';
 import { ApiResponse, Author } from '../types/api';
+import { withFallback, fallbackService } from './fallbackData';
 
 export interface AuthorsResponse {
   authors: Author[];
@@ -24,8 +25,13 @@ export const authorsService = {
 
   // Get all authors (admin)
   getAdminAuthors: async (): Promise<ApiResponse<AuthorsResponse>> => {
-    const response = await api.get('/admin/authors');
-    return response.data;
+    return withFallback(
+      async () => {
+        const response = await api.get('/admin/authors');
+        return response.data;
+      },
+      () => fallbackService.getAdminAuthors()
+    );
   },
 
   // Get author by ID

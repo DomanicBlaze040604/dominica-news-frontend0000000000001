@@ -7,6 +7,7 @@ import { imagesService } from '../../services/images';
 import { TestConnection } from '../../components/TestConnection';
 import { AdminErrorFallback } from '../../components/ErrorFallbacks';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
+import { AdminStatusIndicator } from '../../components/admin/AdminStatusIndicator';
 import { FileText, FolderOpen, Image, TrendingUp, AlertTriangle } from 'lucide-react';
 
 const AdminDashboardContent: React.FC = () => {
@@ -14,8 +15,9 @@ const AdminDashboardContent: React.FC = () => {
   const { data: articlesData, error: articlesError, isLoading: articlesLoading } = useQuery({
     queryKey: ['admin-articles', { page: 1, limit: 1 }],
     queryFn: () => articlesService.getAdminArticles({ page: 1, limit: 1 }),
-    retry: 2,
+    retry: 1,
     retryDelay: 1000,
+    staleTime: 30000, // 30 seconds
   });
 
   // Debug logging
@@ -31,8 +33,9 @@ const AdminDashboardContent: React.FC = () => {
   const { data: categoriesData, error: categoriesError, isLoading: categoriesLoading } = useQuery({
     queryKey: ['admin-categories'],
     queryFn: categoriesService.getAdminCategories,
-    retry: 2,
+    retry: 1,
     retryDelay: 1000,
+    staleTime: 60000, // 1 minute
   });
 
   // Debug logging
@@ -48,15 +51,17 @@ const AdminDashboardContent: React.FC = () => {
   const { data: imagesData, isLoading: imagesLoading } = useQuery({
     queryKey: ['admin-images', { page: 1, limit: 1 }],
     queryFn: () => imagesService.getImages({ page: 1, limit: 1 }),
-    retry: 2,
+    retry: 1,
     retryDelay: 1000,
+    staleTime: 60000, // 1 minute
   });
 
   const { data: publishedArticlesData, isLoading: publishedLoading } = useQuery({
     queryKey: ['admin-articles', { page: 1, limit: 1, status: 'published' }],
     queryFn: () => articlesService.getAdminArticles({ page: 1, limit: 1, status: 'published' }),
-    retry: 2,
+    retry: 1,
     retryDelay: 1000,
+    staleTime: 30000, // 30 seconds
   });
 
   // Check for critical errors
@@ -110,6 +115,9 @@ const AdminDashboardContent: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Status Indicator */}
+      <AdminStatusIndicator showFullStatus={true} />
+
       {/* Welcome section */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>

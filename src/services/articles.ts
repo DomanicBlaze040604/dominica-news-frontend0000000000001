@@ -1,5 +1,6 @@
 import { api } from './api';
 import { ApiResponse, Article, ArticlesResponse, ArticleFormData } from '../types/api';
+import { withFallback, fallbackService } from './fallbackData';
 
 export const articlesService = {
   // Public endpoints
@@ -79,16 +80,21 @@ export const articlesService = {
     status?: 'draft' | 'published';
     category?: string;
   }): Promise<ApiResponse<ArticlesResponse>> => {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.append('page', params.page.toString());
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    if (params?.status) searchParams.append('status', params.status);
-    if (params?.category) searchParams.append('category', params.category);
+    return withFallback(
+      async () => {
+        const searchParams = new URLSearchParams();
+        if (params?.page) searchParams.append('page', params.page.toString());
+        if (params?.limit) searchParams.append('limit', params.limit.toString());
+        if (params?.status) searchParams.append('status', params.status);
+        if (params?.category) searchParams.append('category', params.category);
 
-    const response = await api.get<ApiResponse<ArticlesResponse>>(
-      `/admin/articles?${searchParams.toString()}`
+        const response = await api.get<ApiResponse<ArticlesResponse>>(
+          `/admin/articles?${searchParams.toString()}`
+        );
+        return response.data;
+      },
+      () => fallbackService.getAdminArticles(params)
     );
-    return response.data;
   },
 
   getAdminArticleById: async (id: string): Promise<ApiResponse<{ article: Article }>> => {

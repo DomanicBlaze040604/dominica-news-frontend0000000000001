@@ -1,5 +1,6 @@
 import { api } from './api';
 import { ApiResponse } from '../types/api';
+import { withFallback, fallbackService } from './fallbackData';
 
 export interface StaticPage {
   id: string;
@@ -36,9 +37,14 @@ export const staticPagesService = {
 
   // Get all static pages (admin)
   getAdminPages: async (published?: boolean): Promise<ApiResponse<StaticPagesResponse>> => {
-    const params = published !== undefined ? { published: published.toString() } : {};
-    const response = await api.get('/admin/pages', { params });
-    return response.data;
+    return withFallback(
+      async () => {
+        const params = published !== undefined ? { published: published.toString() } : {};
+        const response = await api.get('/admin/pages', { params });
+        return response.data;
+      },
+      () => fallbackService.getStaticPages(published)
+    );
   },
 
   // Get page by ID (admin)

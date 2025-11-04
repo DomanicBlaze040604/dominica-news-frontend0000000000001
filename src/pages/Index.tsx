@@ -31,6 +31,14 @@ const Index = () => {
     queryKey: ['pinned-articles'],
     queryFn: () => articlesService.getPinnedArticles(3),
     enabled: !searchQuery, // Only fetch when not searching
+    retry: (failureCount, error: any) => {
+      // Don't retry on 4xx errors
+      if (error?.response?.status >= 400 && error?.response?.status < 500) {
+        return false;
+      }
+      return failureCount < 2;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Fetch latest articles
@@ -43,12 +51,29 @@ const Index = () => {
         return articlesService.getLatestArticles({ limit: 9, excludePinned: true });
       }
     },
+    retry: (failureCount, error: any) => {
+      // Don't retry on 4xx errors
+      if (error?.response?.status >= 400 && error?.response?.status < 500) {
+        return false;
+      }
+      return failureCount < 2;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Fetch categories
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
     queryFn: categoriesService.getCategories,
+    retry: (failureCount, error: any) => {
+      // Don't retry on 4xx errors
+      if (error?.response?.status >= 400 && error?.response?.status < 500) {
+        return false;
+      }
+      return failureCount < 2;
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Fetch featured section layout setting

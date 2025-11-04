@@ -1,5 +1,6 @@
 import { api } from './api';
 import { BreakingNews, BreakingNewsFormData, ApiResponse } from '../types/api';
+import { withFallback, fallbackService } from './fallbackData';
 
 export const breakingNewsService = {
   // Get active breaking news (public)
@@ -15,10 +16,25 @@ export const breakingNewsService = {
 
   // Admin endpoints
   getAll: async (page = 1, limit = 10): Promise<{ breakingNews: BreakingNews[]; pagination: { currentPage: number; totalPages: number; totalItems: number; hasNextPage: boolean; hasPrevPage: boolean; limit: number } }> => {
-    const response = await api.get<ApiResponse<{ breakingNews: BreakingNews[]; pagination: { currentPage: number; totalPages: number; totalItems: number; hasNextPage: boolean; hasPrevPage: boolean; limit: number } }>>(
-      `/admin/breaking-news?page=${page}&limit=${limit}`
+    return withFallback(
+      async () => {
+        const response = await api.get<ApiResponse<{ breakingNews: BreakingNews[]; pagination: { currentPage: number; totalPages: number; totalItems: number; hasNextPage: boolean; hasPrevPage: boolean; limit: number } }>>(
+          `/admin/breaking-news?page=${page}&limit=${limit}`
+        );
+        return response.data.data;
+      },
+      () => fallbackService.getBreakingNews().then(result => ({
+        breakingNews: result.data.breakingNews,
+        pagination: {
+          currentPage: page,
+          totalPages: 1,
+          totalItems: result.data.breakingNews.length,
+          hasNextPage: false,
+          hasPrevPage: false,
+          limit,
+        }
+      }))
     );
-    return response.data.data;
   },
 
   create: async (data: BreakingNewsFormData): Promise<BreakingNews> => {
